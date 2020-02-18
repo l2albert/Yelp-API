@@ -1,23 +1,33 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import './App.css';
+import axios from 'axios';
 
-class App extends React.Component {
-  state = { serverMessage: '' };
-
-  componentDidMount() {
-    fetch('/api/demo')
-      .then(response => response.json())
-      .then(data => this.setState({ serverMessage: data.message }));
-  }
-
-  render() {
-    return (
-      <div id="demo">
-        <h1>Hello from client/src/App.js</h1>
-        <h1>{this.state.serverMessage}</h1>
-      </div>
-    );
-  }
-}
+const App = () => {
+  const [places, setPlaces] = useState([]);
+  const [isLoading, setLoading] = useState(true);
+  useEffect(() => {
+    const callOurYelpAPI = async () => {
+      const resp = await axios.get('/api/yelp');
+      setPlaces(resp.data);
+      setLoading(false);
+    };
+    callOurYelpAPI();
+  }, []); //empty bracket means it omly runs once
+  return (
+    <div id="app">
+      <h1>WYNCODE DOES LUNCH</h1>
+      {isLoading ? (
+        <div className="loading">Loading...</div>
+      ) : (
+        <ul>
+          {' '}
+          {places.map(place => (
+            <li key={place.id}>{place.name}</li>
+          ))}
+        </ul>
+      )}
+    </div>
+  );
+};
 
 export default App;
